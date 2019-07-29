@@ -1,28 +1,46 @@
 <template>
-  <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+  <div>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+      <router-link class="navbar-brand" to="/">Gradebooks</router-link>
+      <router-link class="navbar-brand" v-if="!user" to="/login">Login</router-link>
+      <router-link class="navbar-brand" v-if="!user" to="/register">Register</router-link>
+      <router-link class="navbar-brand" v-if="user" to="/teachers">All Professors</router-link>
+      <router-link class="navbar-brand" v-if="user" to="/my-gradebook">My Gradebook</router-link>
+      <router-link class="navbar-brand" v-if="user" to="/gradebooks/create">Add Gradebook</router-link>
+      <router-link class="navbar-brand" v-if="user" to="/professors/create">Add Professor</router-link>
+      <button v-if="user" @click="logout">Logout</button>
+    </nav>
+    <router-view/>
   </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+import { mapGetters, mapMutations } from "vuex";
+import { authService } from "./services/AuthService";
 
 export default {
-  name: 'app',
-  components: {
-    HelloWorld
+  name: "app",
+
+  methods: {
+    logout() {
+      authService.logout();
+      this.setUser(null);
+      localStorage.removeItem('user');
+      this.$router.push("/login");
+    },
+
+    ...mapMutations({
+      setUser: 'LoginStoreModule/setUser'
+    })
+  },
+
+  computed: {
+    ...mapGetters({
+      user: "LoginStoreModule/getUser"
+    })
   }
-}
+};
 </script>
 
 <style>
-#app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
 </style>
