@@ -24,7 +24,10 @@
           </select>
         </div>
 
-        <button class="btn btn-primary">Submit</button>
+        <div class="button-group">
+          <button class="btn btn-primary" type="submit">Submit</button>
+          <button class="btn btn-primary" type="button" @click="goToProffessorsPage">Cancel</button>
+        </div>
       </form>
     </div>
   </div>
@@ -44,10 +47,14 @@ export default {
     addProffessor() {
       proffessorService.proffessorAdd( this.newProffessor )
         .then( success => {
-          console.log(success);
+          this.goToProffessorsPage();
         }).catch( error => {
           alert(error);
         })
+    },
+
+    goToProffessorsPage() {
+      this.$router.push('/teachers');
     }
   }
 }

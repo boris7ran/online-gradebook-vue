@@ -30,7 +30,10 @@
           </select>
         </div>
 
-        <button class="btn btn-primary">Submit</button>
+        <div class="button-group">
+          <button class="btn btn-primary" type="submit">Submit</button>
+          <button class="btn btn-primary" type="button" @click="goToGradebooksPage">Cancel</button>
+        </div>
       </form>
     </div>
   </div>
@@ -64,10 +67,14 @@ export default {
     addGradebook() {
       gradebookService.gradebookAdd(this.newGradebook)
         .then( response => {
-          this.$router.push('/gradebooks')
+          this.goToGradebooksPage();
         }).catch(error => {
           alert(error);
         })
+    },
+
+    goToGradebooksPage() {
+      this.$router.push('/');
     }
   }
 };
