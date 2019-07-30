@@ -18,8 +18,8 @@
         </div>
 
         <div class="form-group row">
-          <label for="image_link" class="form-control col-sm-2">Select Gradebook</label>
-          <select class="form-control col-sm-10" name="gradebook" id="gradebook" v-model="newProffessor.gradebook">
+          <label for="user_id" class="form-control col-sm-2">Select User</label>
+          <select class="form-control col-sm-10" name="user_id" id="user_id" v-model="newProffessor.user_id">
             <option value="1">1</option>
           </select>
         </div>

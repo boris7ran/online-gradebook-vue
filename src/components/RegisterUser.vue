@@ -3,30 +3,6 @@
     <div class="container">
       <form @submit.prevent="registerUser">
         <div class="form-group row">
-          <label for="first_name" class="form-control col-sm-2">First Name</label>
-          <input
-            type="text"
-            class="form-control col-sm-10"
-            id="first_name"
-            name="first_name"
-            v-model="newUser.first_name"
-            required
-          />
-        </div>
-
-        <div class="form-group row">
-          <label for="last_name" class="form-control col-sm-2">Last Name</label>
-          <input
-            type="text"
-            class="form-control col-sm-10"
-            id="last_name"
-            name="last_name"
-            v-model="newUser.last_name"
-            required
-          />
-        </div>
-
-        <div class="form-group row">
           <label for="email" class="form-control col-sm-2">Email</label>
           <input
             type="text"

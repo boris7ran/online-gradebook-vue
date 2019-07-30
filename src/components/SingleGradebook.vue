@@ -18,9 +18,29 @@
         <ul></ul>
       </div>
 
+      <div class="container" v-if="gradebook.comments">
+        <table class="table table-stripped table-bordered">
+          <thead>
+            <tr>
+              <th>Author</th>
+              <th>Content</th>
+              <th>Posted at</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <tr v-for="comment in comments" :key="comment.id">
+              <td>{{ comment.user }}</td>
+              <td>{{ comment.text }}</td>
+              <td>{{ comment.created_at }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
       <div class="container">
         <label>Add a Comment</label>
-        <input type="text" v-model="newComment.text" name="" id="">
+        <textarea v-model="newComment.text" cols="30" rows="10"></textarea>
         <button class="btn btn-primary" @click="submitComment">Submit Comment</button>
       </div>
     </div>
@@ -35,7 +55,7 @@ export default {
   data() {
     return {
       gradebook: {},
-      newComment: {}
+      newComment: {},
     };
   },
 
@@ -54,19 +74,31 @@ export default {
 
   methods: {
     routeToSingleProffessor() {
-      return `/proffessors/${this.gradebook.proffessor.id}`;
+      return `/proffessors/${this.comments[0].proffessor.id}`;
     },
 
     submitComment() {
       this.newComment.user_id = this.user.id;
-      gradebookService.gradebookCommentAdd(this.gradebook.id, this.newComment);
+      gradebookService
+        .gradebookCommentAdd(this.gradebook.id, this.newComment)
+        .then(() => {
+          this.newComment = {};
+          gradebookService
+            .get(this.$route.params.id)
+            .then(response => {
+              this.gradebook = response.data;
+            })
+            .catch(error => {
+              console.log(error);
+            });
+        });
     }
   },
 
   computed: {
     ...mapGetters({
       user: "LoginStoreModule/getUser"
-    })
+    }),
   }
 };
 </script>
