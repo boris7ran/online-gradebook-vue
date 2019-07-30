@@ -12,6 +12,10 @@ export default class ProffessorService {
     getAll() {
       return axios.get('proffessors');
     }
+
+    get(id) {
+      return axios.get('proffessors/' + id);
+    }
 }
 
 export const proffessorService = new ProffessorService();

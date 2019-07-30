@@ -1,12 +1,14 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import GradebooksApp from './components/GradebooksApp.vue'
-import LoginUser from './components/LoginUser.vue'
-import RegisterUser from './components/RegisterUser.vue'
-import ProffesorsApp from './components/ProffesorsApp.vue'
-import MyGradebook from './components/MyGradebook.vue'
-import AddGradebook from './components/AddGradebook.vue'
-import AddProffesor from './components/AddProffesor.vue'
+import GradebooksApp from './components/GradebooksApp'
+import LoginUser from './components/LoginUser'
+import RegisterUser from './components/RegisterUser'
+import ProffesorsApp from './components/ProffesorsApp'
+import MyGradebook from './components/MyGradebook'
+import AddGradebook from './components/AddGradebook'
+import AddProffesor from './components/AddProffesor'
+import SingleProffessor from './components/SingleProffessor'
+import SingleGradebook from './components/SingleGradebook'
 
 Vue.use(Router)
 
@@ -48,6 +50,16 @@ export const router = new Router({
       path: '/professors/create',
       name: 'create-proffesor',
       component: AddProffesor
+    },
+    {
+      path: '/proffessors/:id',
+      name: 'single-proffessor',
+      component: SingleProffessor
+    },
+    {
+      path: '/gradebooks/:id',
+      name: 'single-gradebook',
+      component: SingleGradebook
     }
   ]
 })

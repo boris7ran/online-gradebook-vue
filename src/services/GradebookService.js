@@ -5,8 +5,16 @@ export default class GradebookService {
     axios.defaults.baseURL = 'http://localhost:8000/api/';
   }
 
+  getAll() {
+    return axios.get('gradebooks');
+  }
+
   gradebookAdd(gradebook) {
     return axios.post('gradebooks', gradebook);
+  }
+
+  get(id) {
+    return axios.get('gradebooks/' + id);
   }
 }
 

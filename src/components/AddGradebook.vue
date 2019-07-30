@@ -15,7 +15,7 @@
         </div>
 
         <div class="form-group row">
-          <label for="image_link" class="form-control col-sm-2">Select Gradebook</label>
+          <label for="image_link" class="form-control col-sm-2">Select Head Teacher</label>
           <select
             class="form-control col-sm-10"
             name="gradebook"
@@ -53,7 +53,7 @@ export default {
     proffessorService
       .getAll()
       .then(response => {
-        this.availableProffessors = response.data;
+        this.availableProffessors = response.data.filter( proff => !proff.gradebook);
       })
       .catch(error => {
         alert(error);
@@ -64,7 +64,7 @@ export default {
     addGradebook() {
       gradebookService.gradebookAdd(this.newGradebook)
         .then( response => {
-          console.log(response);
+          this.$router.push('/gradebooks')
         }).catch(error => {
           alert(error);
         })
