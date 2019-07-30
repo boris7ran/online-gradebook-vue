@@ -31,10 +31,23 @@
 </template>
 
 <script>
+import { proffessorService } from './../services/ProffessorService'
+
 export default {
   data() {
     return {
       newProffessor: {}
+    }
+  },
+
+  methods: {
+    addProffessor() {
+      proffessorService.proffessorAdd( this.newProffessor )
+        .then( success => {
+          console.log(success);
+        }).catch( error => {
+          alert(error);
+        })
     }
   }
 }
