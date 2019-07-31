@@ -20,6 +20,14 @@ export default class GradebookService {
   gradebookCommentAdd(id, comment) {
     return axios.post(`gradebooks/${id}/comments`, comment);
   }
+
+  gradebookStudentAdd(id, student) {
+    return axios.post(`gradebooks/${id}/students`, student);
+  }
+
+  gradebookEdit(id, gradebook) {
+    return axios.put(`gradebooks/${id}`, gradebook);
+  }
 }
 
 export const gradebookService = new GradebookService();

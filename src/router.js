@@ -60,6 +60,11 @@ export const router = new Router({
       path: '/gradebooks/:id',
       name: 'single-gradebook',
       component: SingleGradebook
+    },
+    {
+      path: '/gradebooks/:id/edit',
+      name: 'edit-gradebook',
+      component: AddGradebook
     }
   ]
 })

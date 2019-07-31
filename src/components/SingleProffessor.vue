@@ -11,7 +11,7 @@
 
       <div class="container row" v-if="proffessor.gradebook">
         <h3 class="offset-3 col-sm-3"><router-link :to="routeToSingleGradebook()">{{ proffessor.gradebook.name }}</router-link></h3>
-        <p>Number of students: </p>
+        <p>Number of students: {{ proffessor.gradebook.students.length }} </p>
       </div>
     </div>
   </div>

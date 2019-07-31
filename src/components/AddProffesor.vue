@@ -20,7 +20,7 @@
         <div class="form-group row">
           <label for="user_id" class="form-control col-sm-2">Select User</label>
           <select class="form-control col-sm-10" name="user_id" id="user_id" v-model="newProffessor.user_id">
-            <option value="1">1</option>
+            <option :value="user.id" v-for="user in users" :key=user.id>{{ user.email }}</option>
           </select>
         </div>
 
@@ -35,12 +35,23 @@
 
 <script>
 import { proffessorService } from './../services/ProffessorService'
+import { registerService } from './../services/RegisterService'
 
 export default {
   data() {
     return {
-      newProffessor: {}
+      newProffessor: {},
+      users: []
     }
+  },
+
+  created() {
+    registerService.getUsers()
+      .then( response => {
+        this.users = response.data
+      }).catch(error => {
+        console.log(error);
+      })
   },
 
   methods: {

@@ -30,8 +30,22 @@
           </select>
         </div>
 
+        <div class="container" v-if="newGradebook.students">
+          <div class="form-group row" v-for="student in newGradebook.students" :key="student.id">
+            <label class="form-control col-sm-3" for="student">{{ student.name }}</label>
+            <button class="btn btn-danger" type="button" @click="removeStudentFromList(student)">-</button>
+          </div>
+
+          <div class="form-group row">
+            <label for="student" class="form-control col-sm-2">Add new student</label>
+            <input type="text" class="form-control col-sm-3" v-model="newStudent.name"/>
+            <button class="btn btn-success" type="button" @click="addStudentToList()">+</button>
+          </div>
+        </div>
+
         <div class="button-group">
-          <button class="btn btn-primary" type="submit">Submit</button>
+          <button v-if="editable" class="btn btn-primary" type="submit">Edit</button>
+          <button v-else class="btn btn-primary" type="submit">Submit</button>
           <button class="btn btn-primary" type="button" @click="goToGradebooksPage">Cancel</button>
         </div>
       </form>
@@ -48,15 +62,30 @@ export default {
   data() {
     return {
       newGradebook: {},
-      availableProffessors: []
+      availableProffessors: [],
+      newStudent: {},
+      editable: false
     };
   },
 
   created() {
+    if (this.$route.params.id) {
+      this.editable = true;
+      gradebookService
+        .get(this.$route.params.id)
+        .then(response => {
+          this.newGradebook = response.data;
+        })
+        .catch(error => {
+          console.log(error);
+        });
+    }
     proffessorService
       .getAll()
       .then(response => {
-        this.availableProffessors = response.data.filter( proff => !proff.gradebook);
+        this.availableProffessors = response.data.filter(
+          proff => !proff.gradebook
+        );
       })
       .catch(error => {
         alert(error);
@@ -65,16 +94,36 @@ export default {
 
   methods: {
     addGradebook() {
-      gradebookService.gradebookAdd(this.newGradebook)
-        .then( response => {
-          this.goToGradebooksPage();
-        }).catch(error => {
-          alert(error);
-        })
+      if (this.editable) {
+        gradebookService.gradebookEdit(this.newGradebook.id, this.newGradebook)
+          .then( () => {
+            this.goToGradebooksPage();
+          }).catch( error => {
+            console.log(error);
+          });
+      } else {
+        gradebookService
+          .gradebookAdd(this.newGradebook)
+          .then(response => {
+            this.goToGradebooksPage();
+          })
+          .catch(error => {
+            alert(error);
+          });
+      }
+    },
+
+    removeStudentFromList({id}) {
+      this.newGradebook.students = this.newGradebook.students.filter( student => student.id != id);
+    },
+
+    addStudentToList(student) {
+      this.newGradebook.students.push(this.newStudent);
+      this.newStudent = {};
     },
 
     goToGradebooksPage() {
-      this.$router.push('/');
+      this.$router.push("/");
     }
   }
 };

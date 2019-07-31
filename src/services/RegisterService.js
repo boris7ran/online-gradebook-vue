@@ -11,6 +11,10 @@ export default class RegisterService {
         console.log('Success');
       })
   }
+
+  getUsers() {
+    return axios.get('users');
+  }
 }
 
 export const registerService = new RegisterService();
