@@ -28,6 +28,10 @@ export default class GradebookService {
   gradebookEdit(id, gradebook) {
     return axios.put(`gradebooks/${id}`, gradebook);
   }
+
+  delete(id) {
+    return axios.delete(`gradebooks/${id}`);
+  }
 }
 
 export const gradebookService = new GradebookService();

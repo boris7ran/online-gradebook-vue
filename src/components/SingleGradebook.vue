@@ -3,7 +3,16 @@
     <div class="container">
       <div class="container row">
         <h2>{{ gradebook.name }}</h2>
-        <button class="btn btn-primary offset-2"><router-link style="color: white;" :to="routeToEdit()">Edit Gradebook</router-link></button>
+
+        <div class="button-group">
+          <button class="btn btn-primary offset-2">
+            <router-link style="color: white;" :to="routeToEdit()">Edit Gradebook</router-link>
+          </button>
+          <button class="btn btn-primary" v-if="gradebook.students.length < 35">
+            <router-link style="color: white;" :to="routeToAddStudent()">Add Student</router-link>
+          </button>
+          <button class="btn btn-primary" @click="deleteGradebook()">Delete</button>
+        </div>
       </div>
 
       <div class="container">
@@ -26,15 +35,15 @@
 
           <tbody>
             <tr v-for="student in gradebook.students" :key="student.id" height="100">
-              <td width="150"><img :src="student.image_link" alt="Italian Trulli"></td>
+              <td width="150">
+                <img :src="student.image_link" alt="Italian Trulli" />
+              </td>
               <td>{{ student.name }}</td>
             </tr>
           </tbody>
         </table>
       </div>
     </div>
-
-    <add-student :gradebookId="gradebook.id" @studentAdded="updateGradebook"></add-student>
 
     <div class="container">
       <div class="container" v-if="gradebook.comments">
@@ -52,48 +61,67 @@
             <tr v-for="comment in gradebook.comments" :key="comment.id">
               <td>{{ comment.user_id }}</td>
               <td>{{ comment.text }}</td>
-              <td>{{ comment.created_at }}</td>
-              <td><button v-if=" comment.user_id === user.id ">Delete</button></td>
+              <td>{{ formatDate(comment.created_at, 'DD.MM.YYYY. HH:mm' ) }}</td>
+              <td>
+                <button v-if="(comment.user_id === user.id)" @click="deleteComment(comment)">Delete</button>
+              </td>
             </tr>
           </tbody>
         </table>
       </div>
 
-      <label>Add a Comment</label>
-      <input type="text" v-model="newComment.text" cols="30" rows="10" />
-      <button class="btn btn-primary" @click="submitComment">Submit Comment</button>
+      <div class="container">
+        <label>Add a Comment</label>
+        <input type="text" v-model="newComment.text" cols="30" rows="10" />
+        <button class="btn btn-primary" @click="submitComment">Submit Comment</button>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
 import { gradebookService } from "../services/GradebookService";
+import { proffessorService } from "../services/ProffessorService";
+import { commentService } from "../services/CommentService";
 import { mapGetters } from "vuex";
-import AddStudent from "./Gradebook/AddStudent";
+import { dateMixin } from "./../mixins/DateMixin";
 
 export default {
   data() {
     return {
       gradebook: {},
       newComment: {},
-      newStudent: {}
     };
   },
 
-  components: {
-    AddStudent
-  },
+  mixins: [dateMixin],
 
   beforeRouteEnter(to, from, next) {
     next(vm => {
-      gradebookService
-        .get(vm.$route.params.id)
-        .then(response => {
-          vm.gradebook = response.data;
-        })
-        .catch(error => {
-          console.log(error);
-        });
+      if (to.name === "single-gradebook") {
+        gradebookService
+          .get(vm.$route.params.id)
+          .then(response => {
+            vm.gradebook = response.data;
+          })
+          .catch(error => {
+            console.log(error);
+          });
+      } else {
+        proffessorService
+          .getByUserId(vm.user.id)
+          .then(response => {
+            vm.gradebook = response.data.gradebook;
+            vm.gradebook.proffessor = {
+              id: response.data.id,
+              first_name: response.data.first_name,
+              last_name: response.data.last_name
+            };
+          })
+          .catch(() => {
+            vm.$router.push({ name: from.name });
+          });
+      }
     });
   },
 
@@ -104,7 +132,7 @@ export default {
 
     updateGradebook() {
       gradebookService
-        .get(this.$route.params.id)
+        .get(this.gradebook.id)
         .then(response => {
           this.gradebook = response.data;
         })
@@ -124,7 +152,28 @@ export default {
     },
 
     routeToEdit() {
-      return `/gradebooks/${this.gradebook.id}/edit`
+      return `/gradebooks/${this.gradebook.id}/edit`;
+    },
+
+    routeToAddStudent() {
+      return `/gradebooks/${this.gradebook.id}/add_student`;
+    },
+
+    deleteComment(comment) {
+      let confirmed = confirm("Are you sure?");
+      if (confirmed) {
+        commentService.delete(comment.id).then(() => {
+          this.updateGradebook();
+        });
+      }
+    },
+
+    deleteGradebook() {
+      if (confirm("Are you sure?")) {
+        gradebookService.delete(this.gradebook.id).then(() => {
+          this.$router.push("/");
+        });
+      }
     }
   },
 

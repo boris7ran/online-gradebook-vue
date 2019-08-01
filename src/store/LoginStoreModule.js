@@ -6,12 +6,16 @@ export const LoginStoreModule = {
   namespaced: true,
 
   state: {
-    user
+    user,
   },
 
   mutations: {
     setUser(state, payload) {
       state.user = payload;
+    },
+
+    setProffessor(state, payload) {
+      state.proffessor = payload;
     }
   },
 

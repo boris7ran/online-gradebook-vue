@@ -1,6 +1,10 @@
 <template>
   <div>
     <div class="container">
+      <search-filter @term-submitted="updateSearchTerm"></search-filter>
+    </div>
+
+    <div class="container">
       <table v-if="gradebooks" class="table table-stripped table-bordered">
         <thead>
           <tr>
@@ -11,10 +15,16 @@
         </thead>
 
         <tbody>
-          <tr v-for="gradebook in gradebooks" :key="gradebook.id">
-            <td><router-link :to="routeToSingleGradebook(gradebook.id)">{{ gradebook.name }}</router-link></td>
-            <td><router-link :to="routeToSingleProffessor(gradebook.proffessor.id)">{{ gradebook.proffessor.first_name }} {{ gradebook.proffessor.last_name }}</router-link></td>
-            <td>{{ gradebook.created_at }}</td>
+          <tr v-for="gradebook in filteredGradebooks" :key="gradebook.id">
+            <td>
+              <router-link :to="routeToSingleGradebook(gradebook.id)">{{ gradebook.name }}</router-link>
+            </td>
+            <td>
+              <router-link
+                :to="routeToSingleProffessor(gradebook.proffessor.id)"
+              >{{ gradebook.proffessor.first_name }} {{ gradebook.proffessor.last_name }}</router-link>
+            </td>
+            <td>{{ formatDate(gradebook.created_at, 'DD.MM.YYYY. HH:mm' ) }}</td>
           </tr>
         </tbody>
       </table>
@@ -26,13 +36,22 @@
 
 <script>
 import { gradebookService } from "./../services/GradebookService";
+import SearchFilter from "./Filter/SearchFilter";
+import { dateMixin } from "./../mixins/DateMixin";
 
 export default {
   data() {
     return {
-      gradebooks: []
+      gradebooks: [],
+      searchTerm: ""
     };
   },
+
+  components: {
+    SearchFilter
+  },
+
+  mixins: [dateMixin],
 
   beforeRouteEnter(to, from, next) {
     next(vm => {
@@ -46,9 +65,19 @@ export default {
     routeToSingleGradebook(id) {
       return `/gradebooks/${id}`;
     },
-    
+
     routeToSingleProffessor(id) {
       return `/proffessors/${id}`;
+    },
+
+    updateSearchTerm(searchTerm) {
+      this.searchTerm = searchTerm;
+    }
+  },
+
+  computed: {
+    filteredGradebooks() {
+      return this.gradebooks.filter(gradebook => gradebook.name.toLowerCase().includes(this.searchTerm.toLowerCase()));
     }
   }
 };

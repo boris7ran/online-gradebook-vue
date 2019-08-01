@@ -12,6 +12,9 @@
             v-model="newGradebook.name"
             required
           />
+          <div v-if="errors">
+            <error-message v-for="(error, index) in errors.name" :key="index" :message="error"></error-message>
+          </div>
         </div>
 
         <div class="form-group row">
@@ -28,6 +31,9 @@
               :key="proffessor.id"
             >{{ proffessor.first_name }} {{ proffessor.last_name }}</option>
           </select>
+          <div v-if="errors">
+            <error-message v-for="(error, index) in errors.proffessor_id" :key="index" :message="error"></error-message>
+          </div>
         </div>
 
         <div class="container" v-if="newGradebook.students">
@@ -57,6 +63,7 @@
 <script>
 import { proffessorService } from "./../services/ProffessorService";
 import { gradebookService } from "./../services/GradebookService";
+import ErrorMessage from './errors/ErrorMessage';
 
 export default {
   data() {
@@ -64,8 +71,13 @@ export default {
       newGradebook: {},
       availableProffessors: [],
       newStudent: {},
-      editable: false
+      editable: false,
+      errors: {}
     };
+  },
+
+  components: {
+    ErrorMessage
   },
 
   created() {
@@ -99,7 +111,7 @@ export default {
           .then( () => {
             this.goToGradebooksPage();
           }).catch( error => {
-            console.log(error);
+            this.errors = error.response.data.errors;
           });
       } else {
         gradebookService
@@ -108,7 +120,7 @@ export default {
             this.goToGradebooksPage();
           })
           .catch(error => {
-            alert(error);
+            this.errors = error.response.data.errors;
           });
       }
     },

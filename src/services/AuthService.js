@@ -2,7 +2,7 @@ import axios from 'axios'
 
 export default class AuthService {
   constructor() {
-    axios.defaults.baseURL = 'localhost:8000/api/'
+    axios.defaults.baseURL = 'http://localhost:8000/api/'
   }
 
   login(email, password) {

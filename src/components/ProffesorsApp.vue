@@ -1,6 +1,10 @@
 <template>
   <div>
     <div class="container">
+      <search-filter @term-submitted="updateSearchTerm"></search-filter>
+    </div>
+
+    <div class="container">
       <table class="table table-stripped table-bordered">
         <thead>
           <tr>
@@ -12,7 +16,7 @@
         </thead>
 
         <tbody>
-          <tr v-for="proffessor in proffessors" :key="proffessor.id">
+          <tr v-for="proffessor in filteredProffessors" :key="proffessor.id">
             <td><router-link :to="routeToSingleProffessor(proffessor.id)"><img :src="proffessor.image_link" alt="Italian Trulli"></router-link></td>
             <td><router-link :to="routeToSingleProffessor(proffessor.id)">{{ proffessor.first_name }}</router-link></td>
             <td><router-link :to="routeToSingleProffessor(proffessor.id)">{{ proffessor.last_name }}</router-link></td>
@@ -27,12 +31,18 @@
 
 <script>
 import { proffessorService } from "./../services/ProffessorService";
+import SearchFilter from "./Filter/SearchFilter"
 
 export default {
   data() {
     return {
-      proffessors: []
+      proffessors: [],
+      searchTerm: ""
     };
+  },
+
+  components: {
+    SearchFilter
   },
 
   beforeRouteEnter(to, from, next) {
@@ -50,6 +60,20 @@ export default {
 
     routeToSingleGradebook(id) {
       return `/gradebooks/${id}`;
+    },
+
+    updateSearchTerm(searchTerm) {
+      this.searchTerm = searchTerm;
+    },
+
+    fullName(firstName, lastName) {
+      return firstName + ' ' + lastName;
+    }
+  },
+
+  computed: {
+    filteredProffessors() {
+      return this.proffessors.filter(proff => this.fullName(proff.first_name, proff.last_name).toLowerCase().includes(this.searchTerm.toLowerCase()));
     }
   }
 };

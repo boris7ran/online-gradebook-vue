@@ -6,10 +6,7 @@ export default class RegisterService {
   }
 
   registerUser(user) {
-    return axios.post('register', user)
-      .then( () => {
-        console.log('Success');
-      })
+    return axios.post('register', user);
   }
 
   getUsers() {

@@ -12,6 +12,9 @@
             v-model="newUser.email"
             required
           />
+          <div v-if="errors" >
+            <error-message v-for="(error, index) in errors.email" :key="index" :message="error"></error-message>
+          </div>
         </div>
 
         <div class="form-group row">
@@ -24,6 +27,9 @@
             v-model="newUser.password"
             required
           />
+          <div v-if="errors">
+            <error-message v-for="(error, index) in errors.password" :key="index" :message="error"></error-message>
+          </div>
         </div>
 
         <div class="form-group row">
@@ -57,12 +63,19 @@
 
 <script>
 import { registerService } from "./../services/RegisterService";
+import { mapActions } from "vuex";
+import ErrorMessage from './errors/ErrorMessage'
 
 export default {
   data() {
     return {
-      newUser: {}
+      newUser: {},
+      errors: {}
     };
+  },
+
+  components: {
+    ErrorMessage
   },
 
   methods: {
@@ -70,12 +83,20 @@ export default {
       registerService
         .registerUser(this.newUser)
         .then(() => {
-          this.$router.push("/login");
+          this.login({ email: this.newUser.email, password: this.newUser.password }).then(
+            () => {
+              this.$router.push("/");
+            }
+          );
         })
         .catch(error => {
-          console.log(error);
+          this.errors = error.response.data.errors;
         });
-    }
+    },
+
+    ...mapActions({
+      login: "LoginStoreModule/login"
+    })
   }
 };
 </script>
