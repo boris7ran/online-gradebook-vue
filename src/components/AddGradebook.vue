@@ -39,19 +39,21 @@
         <div class="container" v-if="newGradebook.students">
           <div class="form-group row" v-for="student in newGradebook.students" :key="student.id">
             <label class="form-control col-sm-3" for="student">{{ student.name }}</label>
+            <label class="form-control col-sm-5" for="student">{{ student.image_link }}</label>
             <button class="btn btn-danger" type="button" @click="removeStudentFromList(student)">-</button>
           </div>
 
-          <div class="form-group row">
+          <div class="form-group row" vif="newGradebook.students.length < 35">
             <label for="student" class="form-control col-sm-2">Add new student</label>
-            <input type="text" class="form-control col-sm-3" v-model="newStudent.name"/>
-            <button class="btn btn-success" type="button" @click="addStudentToList()">+</button>
+            <input type="text" class="form-control col-sm-3" v-model="newStudent.name" placeholder="Student Name"/>
+            <input type="text" class="form-control col-sm-3" v-model="newStudent.image_link" placeholder="Image Link"/>
+            <button class="btn btn-success" type="button" @click="addStudentToList()" v-if="newStudent.name && newStudent.image_link">+</button>
           </div>
         </div>
 
         <div class="button-group">
-          <button v-if="editable" class="btn btn-primary" type="submit">Edit</button>
-          <button v-else class="btn btn-primary" type="submit">Submit</button>
+          <button v-if="editable" class="btn btn-primary" type="submit" @click="addGradebook()">Edit</button>
+          <button v-else class="btn btn-primary" type="submit" @click="addGradebook()">Submit</button>
           <button class="btn btn-primary" type="button" @click="goToGradebooksPage">Cancel</button>
         </div>
       </form>
@@ -100,7 +102,7 @@ export default {
         );
       })
       .catch(error => {
-        alert(error);
+        this.errors = error.response.data.errors;
       });
   },
 

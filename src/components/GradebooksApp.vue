@@ -14,8 +14,8 @@
           </tr>
         </thead>
 
-        <tbody>
-          <tr v-for="gradebook in filteredGradebooks" :key="gradebook.id">
+        <paginate name="pagGradebooks" :list="filteredGradebooks" :per="displaying" tag="tbody">
+          <tr v-for="gradebook in paginated('pagGradebooks')" :key="gradebook.id">
             <td>
               <router-link :to="routeToSingleGradebook(gradebook.id)">{{ gradebook.name }}</router-link>
             </td>
@@ -26,10 +26,13 @@
             </td>
             <td>{{ formatDate(gradebook.created_at, 'DD.MM.YYYY. HH:mm' ) }}</td>
           </tr>
-        </tbody>
+        </paginate>
       </table>
 
       <p v-else>No gradebooks created!</p>
+      
+      <button v-if="displaying < filteredGradebooks.length" @click="increaseDisplaying">Load More</button>
+
     </div>
   </div>
 </template>
@@ -43,7 +46,9 @@ export default {
   data() {
     return {
       gradebooks: [],
-      searchTerm: ""
+      searchTerm: "",
+      paginate: ["pagGradebooks"],
+      displaying: 10
     };
   },
 
@@ -72,12 +77,18 @@ export default {
 
     updateSearchTerm(searchTerm) {
       this.searchTerm = searchTerm;
+    },
+
+    increaseDisplaying() {
+      this.displaying += 10;
     }
   },
 
   computed: {
     filteredGradebooks() {
-      return this.gradebooks.filter(gradebook => gradebook.name.toLowerCase().includes(this.searchTerm.toLowerCase()));
+      return this.gradebooks.filter(gradebook =>
+        gradebook.name.toLowerCase().includes(this.searchTerm.toLowerCase())
+      );
     }
   }
 };

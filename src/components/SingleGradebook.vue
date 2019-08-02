@@ -1,10 +1,10 @@
 <template>
   <div>
-    <div class="container">
+    <div class="container" v-if="gradebook">
       <div class="container row">
         <h2>{{ gradebook.name }}</h2>
 
-        <div class="button-group">
+        <div class="button-group" v-if="user">
           <button class="btn btn-primary offset-2">
             <router-link style="color: white;" :to="routeToEdit()">Edit Gradebook</router-link>
           </button>
@@ -43,7 +43,7 @@
           </tbody>
         </table>
       </div>
-    </div>
+    
 
     <div class="container">
       <div class="container" v-if="gradebook.comments">
@@ -53,7 +53,7 @@
               <th>Author</th>
               <th>Content</th>
               <th>Posted at</th>
-              <th>Actions</th>
+              <th v-if="user">Actions</th>
             </tr>
           </thead>
 
@@ -62,7 +62,7 @@
               <td>{{ comment.user_id }}</td>
               <td>{{ comment.text }}</td>
               <td>{{ formatDate(comment.created_at, 'DD.MM.YYYY. HH:mm' ) }}</td>
-              <td>
+              <td v-if="user">
                 <button v-if="(comment.user_id === user.id)" @click="deleteComment(comment)">Delete</button>
               </td>
             </tr>
@@ -70,11 +70,17 @@
         </table>
       </div>
 
-      <div class="container">
+      <div class="container" v-if="user">
         <label>Add a Comment</label>
         <input type="text" v-model="newComment.text" cols="30" rows="10" />
         <button class="btn btn-primary" @click="submitComment">Submit Comment</button>
       </div>
+    </div>
+    </div>
+
+    <div v-else>
+      <h2>You aren't currently a head teacher</h2>
+      <button>Go To Home Page</button>
     </div>
   </div>
 </template>
@@ -91,6 +97,7 @@ export default {
     return {
       gradebook: {},
       newComment: {},
+      errors: []
     };
   },
 
@@ -118,8 +125,8 @@ export default {
               last_name: response.data.last_name
             };
           })
-          .catch(() => {
-            vm.$router.push({ name: from.name });
+          .catch(error => {
+            vm.errors = error.response.data.errors;
           });
       }
     });

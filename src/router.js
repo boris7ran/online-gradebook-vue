@@ -76,7 +76,7 @@ export const router = new Router({
 })
 
 router.beforeEach((to, from, next) => {
-  if ( to.name !== 'login-user' && to.name !== 'gradebooks' && to.name !== 'register-user' && !authService.isAuthenticated()){
+  if ( to.name !== 'login-user' && to.name !== 'gradebooks' && to.name !== 'single-proffessor' && to.name !== 'single-gradebook' && to.name !== 'register-user' && !authService.isAuthenticated()){
     return router.push({ name: 'login-user'});
   }
 
