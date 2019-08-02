@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="container">
+    <div class="container pt-5">
       <form @submit.prevent="loginUser">
         <div class="form-group row">
           <label for="email" class="form-control col-sm-2">Email</label>

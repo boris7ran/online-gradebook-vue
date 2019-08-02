@@ -1,16 +1,16 @@
 <template>
   <div>
-    <div class="container">
+    <div class="container pt-5">
       <search-filter @term-submitted="updateSearchTerm"></search-filter>
     </div>
 
-    <div class="container">
-      <table v-if="gradebooks" class="table table-stripped table-bordered">
-        <thead>
+    <div class="container pt-5">
+      <table v-if="gradebooks" class="table table-stripped table-bordered table-hover">
+        <thead class="thead-dark">
           <tr>
             <th>Name</th>
             <th>Head Teacher</th>
-            <th>Created At</th>
+            <th width="250px">Created At</th>
           </tr>
         </thead>
 
@@ -20,19 +20,24 @@
               <router-link :to="routeToSingleGradebook(gradebook.id)">{{ gradebook.name }}</router-link>
             </td>
             <td>
-              <router-link
-                :to="routeToSingleProffessor(gradebook.proffessor.id)"
-              >{{ gradebook.proffessor.first_name }} {{ gradebook.proffessor.last_name }}</router-link>
+              <router-link :to="routeToSingleProffessor(gradebook.proffessor.id)">
+                <p
+                  class="text-center m-0"
+                >{{ gradebook.proffessor.first_name }} {{ gradebook.proffessor.last_name }}</p>
+              </router-link>
             </td>
-            <td>{{ formatDate(gradebook.created_at, 'DD.MM.YYYY. HH:mm' ) }}</td>
+            <td width="250px">
+              <p
+                class="text-center m-0"
+              >{{ formatDate(gradebook.created_at, 'DD.MM.YYYY. HH:mm' ) }}</p>
+            </td>
           </tr>
         </paginate>
       </table>
 
       <p v-else>No gradebooks created!</p>
-      
-      <button v-if="displaying < filteredGradebooks.length" @click="increaseDisplaying">Load More</button>
 
+      <button v-if="displaying < filteredGradebooks.length" @click="increaseDisplaying">Load More</button>
     </div>
   </div>
 </template>

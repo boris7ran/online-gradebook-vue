@@ -1,21 +1,24 @@
 <template>
   <div>
     <div class="container" v-if="gradebook">
-      <div class="container row">
-        <h2>{{ gradebook.name }}</h2>
-
-        <div class="button-group" v-if="user">
-          <button class="btn btn-primary offset-2">
+      <div class="button-group mt-4" v-if="user">
+          <button class="btn btn-primary">
             <router-link style="color: white;" :to="routeToEdit()">Edit Gradebook</router-link>
           </button>
-          <button class="btn btn-primary" v-if="gradebook.students.length < 35">
+          <button
+            class="btn btn-primary"
+            v-if="gradebook && gradebook.students && gradebook.students.length < 35"
+          >
             <router-link style="color: white;" :to="routeToAddStudent()">Add Student</router-link>
           </button>
           <button class="btn btn-primary" @click="deleteGradebook()">Delete</button>
         </div>
+
+      <div class="container row m-3">
+        <h2>{{ gradebook.name }}</h2>
       </div>
 
-      <div class="container">
+      <div class="container" v-if="gradebook && gradebook.students">
         <p>
           Head Teacher:
           <router-link
@@ -24,9 +27,9 @@
         </p>
       </div>
 
-      <div class="contai">
-        <table class="table table-stripped table-bordered">
-          <thead>
+      <div class="container" v-if="gradebook && gradebook.students">
+        <table class="table table-stripped table-bordered text-center m-3 table-hover" style="width:500px">
+          <thead class="thead-dark">
             <tr>
               <th>Image</th>
               <th>Name</th>
@@ -34,51 +37,53 @@
           </thead>
 
           <tbody>
-            <tr v-for="student in gradebook.students" :key="student.id" height="100">
-              <td width="150">
+            <tr v-for="student in gradebook.students" :key="student.id">
+              <td width="75px">
                 <img :src="student.image_link" alt="Italian Trulli" />
               </td>
-              <td>{{ student.name }}</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    
-
-    <div class="container">
-      <div class="container" v-if="gradebook.comments">
-        <table class="table table-stripped table-bordered">
-          <thead>
-            <tr>
-              <th>Author</th>
-              <th>Content</th>
-              <th>Posted at</th>
-              <th v-if="user">Actions</th>
-            </tr>
-          </thead>
-
-          <tbody>
-            <tr v-for="comment in gradebook.comments" :key="comment.id">
-              <td>{{ comment.user_id }}</td>
-              <td>{{ comment.text }}</td>
-              <td>{{ formatDate(comment.created_at, 'DD.MM.YYYY. HH:mm' ) }}</td>
-              <td v-if="user">
-                <button v-if="(comment.user_id === user.id)" @click="deleteComment(comment)">Delete</button>
-              </td>
+              <td><p class="text-center">{{ student.name }}</p></td>
             </tr>
           </tbody>
         </table>
       </div>
 
-      <div class="container" v-if="user">
-        <label>Add a Comment</label>
-        <input type="text" v-model="newComment.text" cols="30" rows="10" />
-        <button class="btn btn-primary" @click="submitComment">Submit Comment</button>
+      <div class="container">
+        <div class="container" v-if="gradebook.comments">
+          <table class="table table-stripped table-bordered table-hover">
+            <thead class="thead-dark">
+              <tr>
+                <th>Author</th>
+                <th>Content</th>
+                <th>Posted at</th>
+                <th v-if="user">Actions</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              <tr v-for="comment in gradebook.comments" :key="comment.id">
+                <td>{{ comment.user_id }}</td>
+                <td>{{ comment.text }}</td>
+                <td>{{ formatDate(comment.created_at, 'DD.MM.YYYY. HH:mm' ) }}</td>
+                <td v-if="user">
+                  <button
+                    v-if="(comment.user_id === user.id)"
+                    @click="deleteComment(comment)"
+                  >Delete</button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="container row mt-5" v-if="user">
+          <label style="background-color: green; color: white;" class="form-control col-sm-2">Add a Comment</label>
+          <input type="text" v-model="newComment.text" class="form-control col-sm-8"/>
+          <button class="btn btn-primary form-control col-sm-2" @click="submitComment">Submit Comment</button>
+        </div>
       </div>
     </div>
-    </div>
 
-    <div v-else>
+    <div class="container" v-else>
       <h2>You aren't currently a head teacher</h2>
       <button>Go To Home Page</button>
     </div>
@@ -126,7 +131,8 @@ export default {
             };
           })
           .catch(error => {
-            vm.errors = error.response.data.errors;
+            console.log(error);
+            // vm.errors = error.response.data.errors;
           });
       }
     });
@@ -134,7 +140,9 @@ export default {
 
   methods: {
     routeToSingleProffessor() {
-      return `/proffessors/${this.gradebook.proffessor.id}`;
+      if (this.gradebook && this.gradebook.proffessor) {
+        return `/proffessors/${this.gradebook.proffessor.id}`;
+      }
     },
 
     updateGradebook() {
@@ -193,4 +201,8 @@ export default {
 </script>
 
 <style>
+img {
+  height: 75px;
+  width: 75px;
+}
 </style>

@@ -17,9 +17,9 @@
             v-model="student.name"
           />
         </div>
-        <!-- <div v-if="errors">
-          <error-message v-for="(error, index) in errors.index.name" :key="index" :message="error"></error-message>
-        </div> -->
+        <div v-if="errors">
+          <error-message v-for="(error, indexError) in errors" :key="indexError" :message="parseError(errors, index)"></error-message>
+        </div>
 
         <div class="form-group row">
           <label for="image_link" class="form-control col-sm-2">Image URL</label>
@@ -75,6 +75,16 @@ export default {
 
     push() {
       this.newStudents.push({});
+    },
+
+    parseError(errors, index){
+      let key = Object.keys(errors);
+      key.forEach( k => {
+         k = k.split('.');
+        //  if (k[0] === index) {
+        //     console.log(k[0]);
+        //  }
+      })
     }
   },
 

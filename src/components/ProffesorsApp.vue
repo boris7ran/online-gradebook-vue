@@ -1,24 +1,24 @@
 <template>
   <div>
-    <div class="container">
+    <div class="container pt-5">
       <search-filter @term-submitted="updateSearchTerm"></search-filter>
     </div>
 
-    <div class="container">
-      <table class="table table-stripped table-bordered">
-        <thead>
+    <div class="container pt-5">
+      <table class="table table-stripped table-bordered table-hover">
+        <thead class="thead-dark">
           <tr>
-            <th>Image</th>
+            <th width="50px">Image</th>
             <th>First Name</th>
             <th>Last Name</th>
-            <th>Gradebook</th>
+            <th width="300px">Gradebook</th>
           </tr>
         </thead>
 
         <tbody>
           <tr v-for="proffessor in filteredProffessors" :key="proffessor.id">
-            <td><router-link :to="routeToSingleProffessor(proffessor.id)"><img :src="proffessor.image_link" alt="Italian Trulli"></router-link></td>
-            <td><router-link :to="routeToSingleProffessor(proffessor.id)">{{ proffessor.first_name }}</router-link></td>
+            <td width="50px"><router-link :to="routeToSingleProffessor(proffessor.id)"><img class="p-0 m-0" :src="proffessor.image_link[0]" alt="Italian Trulli"></router-link></td>
+            <td><router-link :to="routeToSingleProffessor(proffessor.id)"><p class="m-0">{{ proffessor.first_name }}</p></router-link></td>
             <td><router-link :to="routeToSingleProffessor(proffessor.id)">{{ proffessor.last_name }}</router-link></td>
             <td v-if="proffessor.gradebook"><router-link :to="routeToSingleGradebook(proffessor.gradebook.id)">{{ proffessor.gradebook.name }}</router-link></td>
             <td v-else>Currently not a Headteacher</td>
@@ -49,6 +49,9 @@ export default {
     next(vm => {
       proffessorService.getAll().then(response => {
         vm.proffessors = response.data;
+        vm.proffessors.forEach(proff => {
+          proff.image_link = proff.image_link.split(",");
+        })
       });
     });
   },
@@ -80,4 +83,8 @@ export default {
 </script>
 
 <style>
+img {
+  width: 100%;
+  height: 75px;
+}
 </style>
